@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense — Achievements & Rewards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0f0a;
+      color: #e2ffe2;
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 3rem;
+      background: rgba(10, 15, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #4ade80;
+    }
+
+    .logo span {
+      color: #7aab7a;
+      font-weight: 400;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #7aab7a;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4ade80;
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: 8rem 2rem 3rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.1) 0%, transparent 70%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h1 em {
+      font-family: 'Lora', serif;
+      color: #4ade80;
+      font-style: italic;
+    }
+
+    .header-desc {
+      color: #7aab7a;
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    /* Player Profile */
+    .player-profile {
+      background: linear-gradient(135deg, #1a2a1a, #141f14);
+      border: 2px solid #4ade80;
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-profile::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(74, 222, 128, 0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .player-avatar {
+      width: 120px;
+      height: 120px;
+      background: #0a0f0a;
+      border: 4px solid #4ade80;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
+    }
+
+    .player-info {
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .player-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #e2ffe2, #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .player-title {
+      color: #4ade80;
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.1em;
+    }
+
+    .level-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .level-badge {
+      background: #4ade80;
+      color: #0a0f0a;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    }
+
+    .xp-container {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .xp-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      color: #7aab7a;
+    }
+
+    .xp-bar {
+      width: 100%;
+      height: 15px;
+      background: #0a0f0a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .xp-progress {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #38bdf8);
+      width: 67%;
+      border-radius: 8px;
+      transition: width 0.5s;
+      position: relative;
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: #4ade80;
+      box-shadow: 0 10px 30px rgba(74, 222, 128, 0.1);
+    }
+
+    .stat-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #4ade80;
+      display: block;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #7aab7a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Resource Toggle for Badges */
+    .badge-toggle {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0 2.5rem;
+    }
+
+    .toggle-btn {
+      padding: 0.8rem 2rem;
+      background: transparent;
+      border: 2px solid rgba(74, 222, 128, 0.3);
+      color: #7aab7a;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-btn.active {
+      background: #4ade80;
+      color: #0a0f0a;
+      border-color: #4ade80;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
+    }
+
+    .toggle-btn:hover {
+      border-color: #4ade80;
+      color: #e2ffe2;
+    }
+
+    /* Badges Section */
+    .badges-section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+    }
+
+    .badge-count {
+      background: #1a2a1a;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      border: 1px solid #4ade80;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .badge-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-card.earned {
+      border-color: #4ade80;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
+      background: linear-gradient(135deg, #141f14, #1a2a1a);
+    }
+
+    .badge-card.earned::after {
+      content: '✓';
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #4ade80;
+      color: #0a0f0a;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    }
+
+    .badge-card.locked {
+      opacity: 0.7;
+      filter: grayscale(0.6);
+    }
+
+    .badge-card.locked::before {
+      content: '🔒';
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+
+    .badge-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+
+    .badge-card:hover .badge-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .badge-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-desc {
+      color: #7aab7a;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .badge-reward {
+      display: inline-block;
+      background: rgba(74, 222, 128, 0.1);
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      color: #4ade80;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .badge-progress {
+      margin-top: 1rem;
+      background: #0a0f0a;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .badge-progress-bar {
+      height: 100%;
+      background: #4ade80;
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    /* Challenges Section */
+    .challenges-section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: #141f14;
+      border-radius: 20px;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+    }
+
+    .challenges-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .challenges-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+    }
+
+    .challenge-refresh {
+      background: #1a2a1a;
+      border: 1px solid #4ade80;
+      color: #4ade80;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .challenge-refresh:hover {
+      background: #4ade80;
+      color: #0a0f0a;
+    }
+
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .challenge-card {
+      background: #1a2a1a;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: 16px;
+      padding: 1.8rem;
+      display: flex;
+      gap: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .challenge-card:hover {
+      border-color: #4ade80;
+      transform: translateX(5px);
+    }
+
+    .challenge-icon {
+      font-size: 2.2rem;
+      background: #0a0f0a;
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    .challenge-content {
+      flex: 1;
+    }
+
+    .challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .challenge-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .challenge-reward {
+      background: rgba(74, 222, 128, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      color: #4ade80;
+    }
+
+    .challenge-desc {
+      color: #7aab7a;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .challenge-progress {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #0a0f0a;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #38bdf8);
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: #4ade80;
+      min-width: 45px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* Leaderboard */
+    .leaderboard-section {
+      margin-bottom: 3rem;
+    }
+
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .leaderboard-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+    }
+
+    .leaderboard-period {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .period-btn {
+      background: #1a2a1a;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #7aab7a;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .period-btn.active {
+      background: #4ade80;
+      color: #0a0f0a;
+      border-color: #4ade80;
+    }
+
+    .leaderboard-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      transition: background 0.2s;
+    }
+
+    .leaderboard-item:hover {
+      background: #1a2a1a;
+    }
+
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+
+    .rank {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      width: 50px;
+      text-align: center;
+    }
+
+    .rank-1 .rank { color: #FFD700; }
+    .rank-2 .rank { color: #C0C0C0; }
+    .rank-3 .rank { color: #CD7F32; }
+
+    .player-avatar-small {
+      width: 45px;
+      height: 45px;
+      background: #1a2a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      border: 2px solid transparent;
+    }
+
+    .rank-1 .player-avatar-small { border-color: #FFD700; }
+    .rank-2 .player-avatar-small { border-color: #C0C0C0; }
+    .rank-3 .player-avatar-small { border-color: #CD7F32; }
+
+    .player-details {
+      flex: 1;
+    }
+
+    .player-name-small {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .player-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: #7aab7a;
+    }
+
+    .player-score {
+      font-family: 'DM Mono', monospace;
+      color: #4ade80;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .current-user {
+      background: rgba(74, 222, 128, 0.1);
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    /* Weekly Rewards */
+    .rewards-section {
+      background: linear-gradient(135deg, #1a2a1a, #141f14);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: center;
+      border: 1px solid #4ade80;
+    }
+
+    .rewards-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #4ade80;
+    }
+
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .reward-item {
+      background: #0a0f0a;
+      padding: 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    .reward-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .reward-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .reward-value {
+      color: #4ade80;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+    }
+
+    .countdown {
+      display: inline-block;
+      background: rgba(74, 222, 128, 0.1);
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(74, 222, 128, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3rem;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #4ade80;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .footer-links a:hover {
+      color: #4ade80;
+    }
+
+    .copyright {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      h1 { font-size: 2.5rem; }
+      
+      .player-profile {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+      }
+      
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .badges-grid { grid-template-columns: repeat(2, 1fr); }
+      .challenges-grid { grid-template-columns: 1fr; }
+      .rewards-grid { grid-template-columns: 1fr; }
+      
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+          <div class="logo">⟁ EcoSense <span>/ achievements</span></div>
+          <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="electricity.html">Electricity</a></li>
+            <li><a href="water.html">Water</a></li>
+            <li><a href="analysis.html">Analysis</a></li>
+            <li><a href="achievements.html" class="active">Achievements</a></li>
+            <li><a href="ecocleaning.html">Eco-Cleaning</a></li>
+          </ul>
+        </div>
+      </nav>
+
+  <section class="page-header">
+    <div class="container">
+      <span class="section-label">// Gamification</span>
+      <h1>Your Eco <em>Journey</em><br>Achievements</h1>
+      <p class="header-desc">Earn badges, complete challenges, and compete with others while saving the planet.</p>
+    </div>
+  </section>
+
+  <section class="analyzer">
+    <div class="container">
+      <!-- Player Profile -->
+      <div class="player-profile">
+        <div class="player-avatar">
+          🌱
+        </div>
+        <div class="player-info">
+          <div class="player-name">EcoWarrior</div>
+          <div class="player-title">⚡ Level 15 Energy Saver · 💧 Level 12 Water Conservationist</div>
+          <div class="level-container">
+            <div class="level-badge">Level 27</div>
+            <div class="xp-container">
+              <div class="xp-info">
+                <span>2,680 / 4,000 XP</span>
+                <span>Next level: 1,320 XP</span>
+              </div>
+              <div class="xp-bar">
+                <div class="xp-progress" style="width: 67%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon">🏆</span>
+          <span class="stat-value">32</span>
+          <span class="stat-label">Badges Earned</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">⚡</span>
+          <span class="stat-value">847</span>
+          <span class="stat-label">kWh Saved</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">💧</span>
+          <span class="stat-value">5,280</span>
+          <span class="stat-label">Liters Saved</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📅</span>
+          <span class="stat-value">124</span>
+          <span class="stat-label">Day Streak</span>
+        </div>
+      </div>
+
+      <!-- Badge Toggle -->
+      <div class="badge-toggle">
+        <button class="toggle-btn active" id="toggleAll" onclick="filterBadges('all')">
+          <span>🏆</span> All Badges
+        </button>
+        <button class="toggle-btn" id="toggleElectricity" onclick="filterBadges('electricity')">
+          <span>⚡</span> Electricity
+        </button>
+        <button class="toggle-btn" id="toggleWater" onclick="filterBadges('water')">
+          <span>💧</span> Water
+        </button>
+        <button class="toggle-btn" id="toggleSpecial" onclick="filterBadges('special')">
+          <span>🌟</span> Special
+        </button>
+      </div>
+
+      <!-- Electricity Badges (visible by default) -->
+      <div id="electricityBadges">
+        <div class="badges-section">
+          <div class="section-header">
+            <h2>⚡ Electricity Badges</h2>
+            <span class="badge-count">12/15 earned</span>
+          </div>
+          
+          <div class="badges-grid">
+            <div class="badge-card earned">
+              <div class="badge-icon">💡</div>
+              <div class="badge-name">LED Pioneer</div>
+              <div class="badge-desc">Replace all bulbs with LED</div>
+              <span class="badge-reward">+100 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">❄️</div>
+              <div class="badge-name">AC Optimizer</div>
+              <div class="badge-desc">Set AC to 24°C for 30 days</div>
+              <span class="badge-reward">+150 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🔌</div>
+              <div class="badge-name">Standby Slayer</div>
+              <div class="badge-desc">Unplug devices for 100 days</div>
+              <span class="badge-reward">+200 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">📊</div>
+              <div class="badge-name">Power Saver</div>
+              <div class="badge-desc">Save 500 kWh total</div>
+              <span class="badge-reward">+300 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🌞</div>
+              <div class="badge-name">Solar Apprentice</div>
+              <div class="badge-desc">Use solar for 7 days</div>
+              <span class="badge-reward">+75 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">📉</div>
+              <div class="badge-name">Peak Avenger</div>
+              <div class="badge-desc">Shift 50% usage off-peak</div>
+              <span class="badge-reward">+125 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🧊</div>
+              <div class="badge-name">Fridge Master</div>
+              <div class="badge-desc">Clean coils, save 10% energy</div>
+              <span class="badge-reward">+80 XP</span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">🌬️</div>
+              <div class="badge-name">Fan Farewell</div>
+              <div class="badge-desc">Use AC less, fans more</div>
+              <span class="badge-reward">+120 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 70%"></div>
+              </div>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">📱</div>
+              <div class="badge-name">Smart Home Pro</div>
+              <div class="badge-desc">Connect 5 smart plugs</div>
+              <span class="badge-reward">+150 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 40%"></div>
+              </div>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">⚡</div>
+              <div class="badge-name">Watt Wizard</div>
+              <div class="badge-desc">Save 1,000 kWh total</div>
+              <span class="badge-reward">+500 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 65%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water Badges (hidden by default) -->
+      <div id="waterBadges" style="display: none;">
+        <div class="badges-section">
+          <div class="section-header">
+            <h2>💧 Water Badges</h2>
+            <span class="badge-count">10/15 earned</span>
+          </div>
+          
+          <div class="badges-grid">
+            <div class="badge-card earned">
+              <div class="badge-icon">🚿</div>
+              <div class="badge-name">Shower Hero</div>
+              <div class="badge-desc">5-min showers for 30 days</div>
+              <span class="badge-reward">+100 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🔧</div>
+              <div class="badge-name">Leak Detective</div>
+              <div class="badge-desc">Fix 3 leaking taps</div>
+              <span class="badge-reward">+120 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🌧️</div>
+              <div class="badge-name">Rain Catcher</div>
+              <div class="badge-desc">Install rain barrel</div>
+              <span class="badge-reward">+150 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🧺</div>
+              <div class="badge-name">Laundry Legend</div>
+              <div class="badge-desc">Full loads only for 3 months</div>
+              <span class="badge-reward">+200 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🚰</div>
+              <div class="badge-name">Aerator Ace</div>
+              <div class="badge-desc">Install aerators on all taps</div>
+              <span class="badge-reward">+80 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🌿</div>
+              <div class="badge-name">Garden Guru</div>
+              <div class="badge-desc">Water plants at optimal time</div>
+              <span class="badge-reward">+90 XP</span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">🧼</div>
+              <div class="badge-name">Dishwasher Pro</div>
+              <div class="badge-desc">Run full loads only</div>
+              <span class="badge-reward">+75 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">💧</div>
+              <div class="badge-name">Water Wizard</div>
+              <div class="badge-desc">Save 10,000L total</div>
+              <span class="badge-reward">+400 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 45%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Badges (hidden by default) -->
+      <div id="specialBadges" style="display: none;">
+        <div class="badges-section">
+          <div class="section-header">
+            <h2>🌟 Special Badges</h2>
+            <span class="badge-count">5/8 earned</span>
+          </div>
+          
+          <div class="badges-grid">
+            <div class="badge-card earned">
+              <div class="badge-icon">🔥</div>
+              <div class="badge-name">30-Day Streak</div>
+              <div class="badge-desc">Log usage for 30 days straight</div>
+              <span class="badge-reward">+200 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">💯</div>
+              <div class="badge-name">Century Club</div>
+              <div class="badge-desc">100-day logging streak</div>
+              <span class="badge-reward">+500 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🤝</div>
+              <div class="badge-name">Community Hero</div>
+              <div class="badge-desc">Refer 5 friends</div>
+              <span class="badge-reward">+300 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">🌍</div>
+              <div class="badge-name">Planet Saver</div>
+              <div class="badge-desc">Save 1 ton CO₂</div>
+              <span class="badge-reward">+600 XP</span>
+            </div>
+
+            <div class="badge-card earned">
+              <div class="badge-icon">📈</div>
+              <div class="badge-name">Analytics Master</div>
+              <div class="badge-desc">Use all analysis features</div>
+              <span class="badge-reward">+150 XP</span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-icon">👑</div>
+              <div class="badge-name">Eco Champion</div>
+              <div class="badge-desc">Top 10 on leaderboard</div>
+              <span class="badge-reward">+1,000 XP</span>
+              <div class="badge-progress">
+                <div class="badge-progress-bar" style="width: 30%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Challenges -->
+      <div class="challenges-section">
+        <div class="challenges-header">
+          <h2>🎯 Active Challenges</h2>
+          <button class="challenge-refresh" onclick="refreshChallenges()">⟲ New Challenges</button>
+        </div>
+        
+        <div class="challenges-grid">
+          <div class="challenge-card">
+            <div class="challenge-icon">⚡</div>
+            <div class="challenge-content">
+              <div class="challenge-header">
+                <span class="challenge-name">30-Day Energy Challenge</span>
+                <span class="challenge-reward">+200 XP</span>
+              </div>
+              <div class="challenge-desc">Reduce electricity usage by 15% compared to last month</div>
+              <div class="challenge-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 67%"></div>
+                </div>
+                <span class="progress-text">10/15%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="challenge-card">
+            <div class="challenge-icon">💧</div>
+            <div class="challenge-content">
+              <div class="challenge-header">
+                <span class="challenge-name">Water Saver Week</span>
+                <span class="challenge-reward">+150 XP</span>
+              </div>
+              <div class="challenge-desc">Keep daily water usage below 250L for 7 days</div>
+              <div class="challenge-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 71%"></div>
+                </div>
+                <span class="progress-text">5/7 days</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="challenge-card">
+            <div class="challenge-icon">🌡️</div>
+            <div class="challenge-content">
+              <div class="challenge-header">
+                <span class="challenge-name">AC Temperature Challenge</span>
+                <span class="challenge-reward">+100 XP</span>
+              </div>
+              <div class="challenge-desc">Keep AC at 24°C or higher for 30 days</div>
+              <div class="challenge-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 43%"></div>
+                </div>
+                <span class="progress-text">13/30 days</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="challenge-card">
+            <div class="challenge-icon">🚿</div>
+            <div class="challenge-content">
+              <div class="challenge-header">
+                <span class="challenge-name">5-Minute Shower Challenge</span>
+                <span class="challenge-reward">+120 XP</span>
+              </div>
+              <div class="challenge-desc">Keep showers under 5 minutes for 2 weeks</div>
+              <div class="challenge-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 57%"></div>
+                </div>
+                <span class="progress-text">8/14 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard-section">
+        <div class="leaderboard-header">
+          <h2>🌍 Global Leaderboard</h2>
+          <div class="leaderboard-period">
+            <button class="period-btn active">Weekly</button>
+            <button class="period-btn">Monthly</button>
+            <button class="period-btn">All Time</button>
+          </div>
+        </div>
+        
+        <div class="leaderboard-card">
+          <div class="leaderboard-item rank-1">
+            <span class="rank">1</span>
+            <div class="player-avatar-small">👑</div>
+            <div class="player-details">
+              <div class="player-name-small">GreenGuru</div>
+              <div class="player-meta">
+                <span>Level 42</span>
+                <span>⚡ 2,450 kWh saved</span>
+              </div>
+            </div>
+            <span class="player-score">15,780 XP</span>
+          </div>
+
+          <div class="leaderboard-item rank-2">
+            <span class="rank">2</span>
+            <div class="player-avatar-small">🌿</div>
+            <div class="player-details">
+              <div class="player-name-small">EcoMaster</div>
+              <div class="player-meta">
+                <span>Level 38</span>
+                <span>💧 5,280L saved</span>
+              </div>
+            </div>
+            <span class="player-score">14,210 XP</span>
+          </div>
+
+          <div class="leaderboard-item rank-3">
+            <span class="rank">3</span>
+            <div class="player-avatar-small">🍃</div>
+            <div class="player-details">
+              <div class="player-name-small">SaverQueen</div>
+              <div class="player-meta">
+                <span>Level 35</span>
+                <span>⚡ 1,980 kWh saved</span>
+              </div>
+            </div>
+            <span class="player-score">13,450 XP</span>
+          </div>
+
+          <div class="leaderboard-item">
+            <span class="rank">4</span>
+            <div class="player-avatar-small">⚡</div>
+            <div class="player-details">
+              <div class="player-name-small">PowerSaver</div>
+              <div class="player-meta">
+                <span>Level 31</span>
+                <span>⚡ 1,750 kWh saved</span>
+              </div>
+            </div>
+            <span class="player-score">12,100 XP</span>
+          </div>
+
+          <div class="leaderboard-item">
+            <span class="rank">5</span>
+            <div class="player-avatar-small">💧</div>
+            <div class="player-details">
+              <div class="player-name-small">WaterWizard</div>
+              <div class="player-meta">
+                <span>Level 29</span>
+                <span>💧 4,280L saved</span>
+              </div>
+            </div>
+            <span class="player-score">11,420 XP</span>
+          </div>
+
+          <div class="leaderboard-item current-user">
+            <span class="rank">27</span>
+            <div class="player-avatar-small">🌱</div>
+            <div class="player-details">
+              <div class="player-name-small">You</div>
+              <div class="player-meta">
+                <span>Level 27</span>
+                <span>⚡ 847 kWh saved</span>
+              </div>
+            </div>
+            <span class="player-score">2,680 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Rewards -->
+      <div class="rewards-section">
+        <h3 class="rewards-title">🎁 This Week's Bonus Rewards</h3>
+        <div class="rewards-grid">
+          <div class="reward-item">
+            <span class="reward-icon">🥇</span>
+            <div class="reward-name">Top Saver</div>
+            <div class="reward-value">500 XP</div>
+          </div>
+          <div class="reward-item">
+            <span class="reward-icon">📈</span>
+            <div class="reward-name">Most Improved</div>
+            <div class="reward-value">300 XP</div>
+          </div>
+          <div class="reward-item">
+            <span class="reward-icon">🔥</span>
+            <div class="reward-name">Streak Master</div>
+            <div class="reward-value">200 XP</div>
+          </div>
+        </div>
+        <div class="countdown">
+          ⏰ Rewards reset in: 2 days 14 hours
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">⟁ EcoSense</div>
+    <ul class="footer-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="electricity.html">Electricity</a></li>
+      <li><a href="water.html">Water</a></li>
+      
+    </ul>
+    <div class="copyright">© 2025 EcoSense</div>
+  </footer>
+ <script src="api.js"></script>
+  <script>
+    // Filter badges by category
+    function filterBadges(category) {
+      // Update toggle buttons
+      document.getElementById('toggleAll').classList.toggle('active', category === 'all');
+      document.getElementById('toggleElectricity').classList.toggle('active', category === 'electricity');
+      document.getElementById('toggleWater').classList.toggle('active', category === 'water');
+      document.getElementById('toggleSpecial').classList.toggle('active', category === 'special');
+      
+      // Show/hide badge sections
+      if (category === 'all') {
+        document.getElementById('electricityBadges').style.display = 'block';
+        document.getElementById('waterBadges').style.display = 'block';
+        document.getElementById('specialBadges').style.display = 'block';
+      } else {
+        document.getElementById('electricityBadges').style.display = category === 'electricity' ? 'block' : 'none';
+        document.getElementById('waterBadges').style.display = category === 'water' ? 'block' : 'none';
+        document.getElementById('specialBadges').style.display = category === 'special' ? 'block' : 'none';
+      }
+    }
+
+    // Refresh challenges (simulate new ones)
+    function refreshChallenges() {
+      const challenges = [
+        {
+          icon: '⚡',
+          name: 'Weekend Warrior',
+          desc: 'Reduce weekend usage by 20%',
+          progress: '0/20%',
+          xp: '+150 XP'
+        },
+        {
+          icon: '💧',
+          name: 'Leak Hunt',
+          desc: 'Find and fix 2 leaks',
+          progress: '0/2 leaks',
+          xp: '+200 XP'
+        },
+        {
+          icon: '🌡️',
+          name: 'Fan Only Day',
+          desc: 'No AC for 1 full day',
+          progress: '0/1 day',
+          xp: '+100 XP'
+        },
+        {
+          icon: '🚿',
+          name: 'Bucket Bath',
+          desc: 'Use bucket instead of shower for 3 days',
+          progress: '0/3 days',
+          xp: '+120 XP'
+        }
+      ];
+      
+      // Update first 4 challenges (simplified - in real app would update DOM)
+      alert('✨ New challenges loaded! Check them out.');
+    }
+
+    // Simulate real-time updates
+    setInterval(() => {
+      // Update XP bar (simulate progress)
+      const xpBar = document.querySelector('.xp-progress');
+      const currentWidth = parseFloat(xpBar.style.width);
+      if (currentWidth < 100) {
+        xpBar.style.width = (currentWidth + 0.1) + '%';
+      }
+    }, 30000); // Update every 30 seconds
+  </script>
+</body>
+</html>

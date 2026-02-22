@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense — Electricity Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    /* ELECTRICITY PAGE STYLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0f0a;
+      color: #e2ffe2;
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 3rem;
+      background: rgba(10, 15, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #4ade80;
+    }
+
+    .logo span {
+      color: #7aab7a;
+      font-weight: 400;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #7aab7a;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4ade80;
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: 8rem 2rem 3rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.1) 0%, transparent 70%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h1 em {
+      font-family: 'Lora', serif;
+      color: #4ade80;
+      font-style: italic;
+    }
+
+    .header-desc {
+      color: #7aab7a;
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    /* Analyzer Section */
+    .analyzer {
+      padding: 3rem 2rem 5rem;
+    }
+
+    .analyzer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Input Panel */
+    .input-panel {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 1.25rem 1.5rem;
+      background: #1a2a1a;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      color: #4ade80;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    }
+
+    .panel-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #7aab7a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #0a0f0a;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #e2ffe2;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    select:focus, input:focus {
+      border-color: #4ade80;
+    }
+
+    select option {
+      background: #0a0f0a;
+    }
+
+    .range-with-value {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      padding: 0;
+      height: 4px;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #4ade80;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .range-value {
+      min-width: 60px;
+      color: #4ade80;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .input-hint {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: #4a6b4a;
+      margin-top: 0.25rem;
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 1rem;
+      background: #4ade80;
+      color: #0a0f0a;
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      margin-top: 1rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
+    }
+
+    /* Results Panel */
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .result-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .result-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #4ade80;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #7aab7a;
+    }
+
+    .waste-bar-wrap {
+      margin-top: 1rem;
+      background: #0a0f0a;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .waste-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    .efficient-bar { background: #4ade80; }
+    .moderate-bar { background: #fbbf24; }
+    .wasteful-bar { background: #f87171; }
+
+    .tip-card {
+      background: rgba(74, 222, 128, 0.05);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .tip-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      color: #4ade80;
+      margin-bottom: 1rem;
+    }
+
+    .tip-list {
+      list-style: none;
+    }
+
+    .tip-list li {
+      color: #7aab7a;
+      font-size: 0.85rem;
+      padding-left: 1.2rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+    }
+
+    .tip-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #4ade80;
+    }
+
+    /* Appliance Guide */
+    .appliance-guide {
+      padding: 4rem 2rem;
+      background: #0e160e;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .guide-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .guide-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .guide-watt {
+      color: #4ade80;
+      font-family: 'DM Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .guide-desc {
+      color: #7aab7a;
+      font-size: 0.8rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(74, 222, 128, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #4ade80;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .footer-links a:hover {
+      color: #4ade80;
+    }
+
+    .copyright {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      h1 { font-size: 2.5rem; }
+      .analyzer-grid { grid-template-columns: 1fr; }
+      .guide-grid { grid-template-columns: repeat(2, 1fr); }
+      footer { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+          <div class="logo">⟁ EcoSense <span>/ electricity</span></div>
+          <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="electricity.html" class="active">Electricity</a></li>
+            <li><a href="water.html">Water</a></li>
+            <li><a href="analysis.html">Analysis</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+            <li><a href="ecocleaning.html">Eco-Cleaning</a></li>
+          </ul>
+        </div>
+      </nav>
+
+  <section class="page-header">
+    <div class="container">
+      <span class="section-label">// Electricity Analyzer</span>
+      <h1>Track Your <em>Energy</em><br>Consumption</h1>
+      <p class="header-desc">Calculate exactly how much electricity your appliances use, identify waste, and get personalized savings tips.</p>
+    </div>
+  </section>
+
+  <section class="analyzer">
+    <div class="container">
+      <div class="analyzer-grid">
+        <!-- Input Panel -->
+        <div class="input-panel">
+          <div class="panel-header">⚡ Enter Your Details</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label>Appliance Type</label>
+              <select id="applianceType">
+                <option value="fan">Ceiling Fan (75W)</option>
+                <option value="light">LED Light (10W)</option>
+                <option value="ac">Air Conditioner (1500W)</option>
+                <option value="tv">Television (100W)</option>
+                <option value="fridge">Refrigerator (150W)</option>
+                <option value="washer">Washing Machine (500W)</option>
+                <option value="heater">Room Heater (2000W)</option>
+                <option value="geyser">Water Geyser (3000W)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Number of Appliances</label>
+              <input type="number" id="applianceCount" min="1" max="20" value="1">
+            </div>
+
+            <div class="form-group">
+              <label>Hours Used Per Day</label>
+              <input type="number" id="hoursUsed" min="0" max="24" value="8">
+            </div>
+
+            <div class="form-group">
+              <label>Days Used Per Week</label>
+              <div class="range-with-value">
+                <input type="range" id="daysPerWeek" min="1" max="7" value="7">
+                <span class="range-value" id="daysValue">7 days</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Room Occupancy</label>
+              <select id="occupancy">
+                <option value="1">Always occupied (0% waste)</option>
+                <option value="0.6">Sometimes empty (40% waste)</option>
+                <option value="0.3">Often empty (70% waste)</option>
+                <option value="0">Always empty (100% waste)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Electricity Rate (₹/kWh)</label>
+              <input type="number" id="tariff" min="1" max="20" value="6" step="0.5">
+              <span class="input-hint">Average Indian rate: ₹6-8 per kWh</span>
+            </div>
+
+            <button class="calc-btn" onclick="calculateElectricity()">Calculate Consumption</button>
+          </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="result-panel" id="resultPanel">
+          <div class="result-card">
+            <div class="result-label">Monthly Consumption</div>
+            <div class="result-value" id="consumptionValue">—</div>
+            <div class="result-unit" id="consumptionUnit">kilowatt-hours (kWh)</div>
+            <div class="waste-bar-wrap">
+              <div class="waste-bar" id="consumptionBar"></div>
+            </div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-label">Monthly Cost</div>
+            <div class="result-value" id="costValue">—</div>
+            <div class="result-unit" id="costUnit">Indian Rupees (₹)</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-label">Carbon Footprint</div>
+            <div class="result-value" id="carbonValue">—</div>
+            <div class="result-unit" id="carbonUnit">kg CO₂ per month</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-label">Efficiency Rating</div>
+            <div class="result-value" id="efficiencyValue">—</div>
+            <div class="result-unit" id="efficiencyDesc"></div>
+          </div>
+
+          <div class="tip-card" id="tipCard">
+            <div class="tip-title">⚡ Energy-Saving Tips</div>
+            <ul class="tip-list" id="tipList">
+              <li>Enter your details and click Calculate to see personalized tips</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="appliance-guide">
+    <div class="container">
+      <span class="section-label">// Appliance Guide</span>
+      <h2>Common Appliance<br>Power Ratings</h2>
+      <div class="guide-grid">
+        <div class="guide-card">
+          <h3>LED Bulb</h3>
+          <div class="guide-watt">10 W</div>
+          <div class="guide-desc">₹3-5 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Ceiling Fan</h3>
+          <div class="guide-watt">75 W</div>
+          <div class="guide-desc">₹20-30 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Refrigerator</h3>
+          <div class="guide-watt">150 W</div>
+          <div class="guide-desc">₹150-200 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>AC (1.5 Ton)</h3>
+          <div class="guide-watt">1500 W</div>
+          <div class="guide-desc">₹1000-1500 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Washing Machine</h3>
+          <div class="guide-watt">500 W</div>
+          <div class="guide-desc">₹100-150 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Television</h3>
+          <div class="guide-watt">100 W</div>
+          <div class="guide-desc">₹30-40 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Room Heater</h3>
+          <div class="guide-watt">2000 W</div>
+          <div class="guide-desc">₹1500-2000 per month</div>
+        </div>
+        <div class="guide-card">
+          <h3>Water Geyser</h3>
+          <div class="guide-watt">3000 W</div>
+          <div class="guide-desc">₹2000-2500 per month</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">⟁ EcoSense</div>
+    <ul class="footer-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="electricity.html">Electricity</a></li>
+      <li><a href="water.html">Water</a></li>
+    </ul>
+    <div class="copyright">© 2025 EcoSense</div>
+  </footer>
+  <script src="api.js"></script>
+
+  <script>
+    // Appliance wattage mapping
+    const wattage = {
+      fan: 75, light: 10, ac: 1500, tv: 100, 
+      fridge: 150, washer: 500, heater: 2000, geyser: 3000
+    };
+
+// Update days display
+document.getElementById('daysPerWeek').addEventListener('input', function(e) {
+    document.getElementById('daysValue').textContent = e.target.value + ' days';
+});
+
+// Main calculation function - UPDATED to use backend API
+async function calculateElectricity() {
+    // Get input values
+    const applianceType = document.getElementById('applianceType').value;
+    const count = parseInt(document.getElementById('applianceCount').value) || 1;
+    const hours = parseFloat(document.getElementById('hoursUsed').value) || 0;
+    const daysPerWeek = parseInt(document.getElementById('daysPerWeek').value);
+    const occupancy = parseFloat(document.getElementById('occupancy').value);
+    const tariff = parseFloat(document.getElementById('tariff').value) || 6;
+    
+    // Get wattage based on appliance
+    const wattage = {
+        fan: 75, light: 10, ac: 1500, tv: 100, 
+        fridge: 150, washer: 500, heater: 2000, geyser: 3000
+    };
+    const watts = wattage[applianceType] || 0;
+
+    // Show loading
+    document.getElementById('consumptionValue').textContent = '...';
+    document.getElementById('costValue').textContent = '...';
+    document.getElementById('carbonValue').textContent = '...';
+    document.getElementById('efficiencyValue').textContent = '...';
+    
+    try {
+        // Call backend API
+        const result = await api.electricity.calculate({
+            applianceType,
+            watts,
+            hoursUsed: hours,
+            daysPerWeek,
+            occupancy,
+            tariff
+        });
+        
+        // Update results
+        document.getElementById('consumptionValue').textContent = result.monthlyKwh.toFixed(1);
+        document.getElementById('costValue').textContent = '₹' + Math.round(result.monthlyCost);
+        document.getElementById('carbonValue').textContent = result.carbonFootprint.toFixed(1);
+        document.getElementById('efficiencyValue').textContent = result.efficiency;
+
+        // Update waste bar
+        const bar = document.getElementById('consumptionBar');
+        if (result.efficiency === 'Efficient') {
+            bar.className = 'waste-bar efficient-bar';
+            bar.style.width = '20%';
+        } else if (result.efficiency === 'Moderate') {
+            bar.className = 'waste-bar moderate-bar';
+            bar.style.width = '50%';
+        } else {
+            bar.className = 'waste-bar wasteful-bar';
+            bar.style.width = '85%';
+        }
+
+        // Update waste description
+        const wasteDesc = document.getElementById('efficiencyDesc');
+        if (result.wastePercentage < 20) {
+            wasteDesc.textContent = 'Excellent! Minimal waste detected';
+        } else if (result.wastePercentage < 50) {
+            wasteDesc.textContent = `${Math.round(result.wastePercentage)}% estimated waste`;
+        } else {
+            wasteDesc.textContent = `${Math.round(result.wastePercentage)}% waste - improvement needed`;
+        }
+
+        // Update tips
+        const tipList = document.getElementById('tipList');
+        if (result.tips && result.tips.length > 0) {
+            tipList.innerHTML = result.tips.map(tip => `<li>${tip}</li>`).join('');
+        } else {
+            tipList.innerHTML = '<li>✅ Your usage looks good! Keep it up!</li>';
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to calculate. Make sure backend is running on port 5001');
+        
+        // Reset to default values on error
+        document.getElementById('consumptionValue').textContent = '—';
+        document.getElementById('costValue').textContent = '—';
+        document.getElementById('carbonValue').textContent = '—';
+        document.getElementById('efficiencyValue').textContent = '—';
+    }
+}
+  </script>
+</body>
+</html>

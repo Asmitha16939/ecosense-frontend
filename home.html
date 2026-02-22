@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense — Smart Home Resource Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    /* HOME PAGE STYLES - Copy your existing CSS here */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0f0a;
+      color: #e2ffe2;
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 3rem;
+      background: rgba(10, 15, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #4ade80;
+    }
+
+    .logo span {
+      color: #7aab7a;
+      font-weight: 400;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #7aab7a;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4ade80;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 2rem;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #166534;
+      border-radius: 100px;
+      color: #4ade80;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-family: 'Lora', serif;
+      color: #4ade80;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: #7aab7a;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 4rem;
+    }
+
+    .btn-primary {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      padding: 1rem 2rem;
+      background: #4ade80;
+      color: #0a0f0a;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
+    }
+
+    .btn-secondary {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      padding: 1rem 2rem;
+      background: transparent;
+      color: #7aab7a;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      color: #e2ffe2;
+      border-color: #4ade80;
+    }
+
+    .stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      border-top: 1px solid rgba(74, 222, 128, 0.1);
+      padding-top: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #4ade80;
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 2rem;
+      background: #0e160e;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      padding: 2.5rem;
+      border-radius: 4px;
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: #4ade80;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: #7aab7a;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .feature-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #4ade80;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .cta h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    .cta p {
+      color: #7aab7a;
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(74, 222, 128, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #4ade80;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .footer-links a:hover {
+      color: #4ade80;
+    }
+
+    .copyright {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      h1 { font-size: 3rem; }
+      .stats { flex-wrap: wrap; gap: 1.5rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+          <div class="logo">⟁ EcoSense <span>/ home</span></div>
+          <ul class="nav-links">
+            <li><a href="home.html" class="active">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="electricity.html">Electricity</a></li>
+            <li><a href="water.html">Water</a></li>
+            <li><a href="analysis.html">Analysis</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+            <li><a href="ecocleaning.html">Eco-Cleaning</a></li>
+          </ul>
+        </div>
+      </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">AI-Powered · No Hardware · Free</span>
+      <h1>Smart Resource<br>Analyzer For <em>Everyone</em></h1>
+      <p class="hero-sub">Understand your electricity and water consumption patterns, identify waste, and save money — all without expensive smart meters or sensors.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="window.location.href='electricity.html'">Analyze Electricity</button>
+        <button class="btn-secondary" onclick="window.location.href='water.html'">Analyze Water</button>
+      </div>
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-number">30%</span>
+          <span class="stat-label">Average Savings</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10k+</span>
+          <span class="stat-label">Happy Users</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Zero</span>
+          <span class="stat-label">Hardware Needed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <span class="section-label">// What We Offer</span>
+      <h2>Six Powerful<br>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <h3>Electricity Analyzer</h3>
+          <p>Track appliance usage and get energy-saving recommendations.</p>
+          <a href="electricity.html" class="feature-link">Try Now →</a>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💧</span>
+          <h3>Water Analyzer</h3>
+          <p>Measure water consumption and discover conservation opportunities.</p>
+          <a href="water.html" class="feature-link">Try Now →</a>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3>Predictive Analysis</h3>
+          <p>AI-powered forecasts of your future consumption patterns.</p>
+          <a href="analysis.html" class="feature-link">Try Now →</a>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🏆</span>
+          <h3>Achievements</h3>
+          <p>Earn badges and compete on the leaderboard.</p>
+          <a href="achievements.html" class="feature-link">Try Now →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <span class="section-label">// Get Started</span>
+      <h2>Ready to Reduce<br>Your Footprint?</h2>
+      <p>Join thousands of households already using EcoSense to track and reduce their resource consumption.</p>
+      <button class="btn-primary" onclick="window.location.href='electricity.html'">Start Analyzing Now</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">⟁ EcoSense</div>
+    <ul class="footer-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="electricity.html">Electricity</a></li>
+      <li><a href="water.html">Water</a></li>
+      
+    </ul>
+    <div class="copyright">© 2025 EcoSense</div>
+  </footer>
+ <script src="api.js"></script>
+  <script>
+    // Simple script for home page interactions
+    document.querySelectorAll('.feature-link, .btn-primary, .btn-secondary').forEach(button => {
+      button.addEventListener('click', function(e) {
+        if(this.tagName === 'A') return;
+        window.location.href = this.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || '#';
+      });
+    });
+  </script>
+</body>
+</html>

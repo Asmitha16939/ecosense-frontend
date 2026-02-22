@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense — Predictive Analysis Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0f0a;
+      color: #e2ffe2;
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 3rem;
+      background: rgba(10, 15, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #4ade80;
+    }
+
+    .logo span {
+      color: #7aab7a;
+      font-weight: 400;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #7aab7a;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4ade80;
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: 8rem 2rem 3rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.1) 0%, transparent 70%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h1 em {
+      font-family: 'Lora', serif;
+      color: #4ade80;
+      font-style: italic;
+    }
+
+    .header-desc {
+      color: #7aab7a;
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    /* Resource Toggle */
+    .resource-toggle {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0 3rem;
+    }
+
+    .toggle-btn {
+      padding: 1rem 2.5rem;
+      background: transparent;
+      border: 2px solid rgba(74, 222, 128, 0.3);
+      color: #7aab7a;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .toggle-btn.active {
+      background: #4ade80;
+      color: #0a0f0a;
+      border-color: #4ade80;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
+    }
+
+    .toggle-btn:hover {
+      border-color: #4ade80;
+      color: #e2ffe2;
+    }
+
+    /* AI Status */
+    .ai-status {
+      background: linear-gradient(135deg, #1a2a1a, #141f14);
+      border: 1px solid #4ade80;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .ai-pulse {
+      width: 16px;
+      height: 16px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    .ai-text {
+      font-family: 'DM Mono', monospace;
+      color: #4ade80;
+      font-size: 1rem;
+    }
+
+    .ai-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .ai-stat {
+      text-align: center;
+    }
+
+    .ai-stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      color: #4ade80;
+      display: block;
+    }
+
+    .ai-stat-label {
+      font-size: 0.7rem;
+      color: #7aab7a;
+    }
+
+    /* Summary Cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .summary-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      border-color: #4ade80;
+    }
+
+    .summary-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .summary-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #7aab7a;
+      text-transform: uppercase;
+    }
+
+    .summary-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #4ade80;
+      display: block;
+      margin: 0.5rem 0;
+    }
+
+    .summary-trend {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .trend-up { color: #f87171; }
+    .trend-down { color: #4ade80; }
+
+    /* Prediction Cards */
+    .prediction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .prediction-card {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prediction-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4ade80, #38bdf8);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .prediction-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .prediction-card:hover {
+      transform: translateY(-5px);
+      border-color: #4ade80;
+    }
+
+    .pred-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #7aab7a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .pred-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #4ade80;
+      display: block;
+      margin: 0.75rem 0;
+    }
+
+    .pred-desc {
+      color: #7aab7a;
+      font-size: 0.9rem;
+    }
+
+    .pred-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background: rgba(74, 222, 128, 0.1);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    /* Chart Section */
+    .chart-section {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .chart-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+    }
+
+    .chart-period {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .period-btn {
+      background: #0a0f0a;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #7aab7a;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .period-btn.active {
+      background: #4ade80;
+      color: #0a0f0a;
+      border-color: #4ade80;
+    }
+
+    .chart-container {
+      height: 350px;
+      position: relative;
+    }
+
+    /* Insights Grid */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .insights-panel {
+      background: #141f14;
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .insights-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .insights-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .insights-count {
+      background: #1a2a1a;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      color: #4ade80;
+    }
+
+    .insight-item {
+      padding: 1.2rem;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      display: flex;
+      gap: 1rem;
+      transition: background 0.2s;
+    }
+
+    .insight-item:hover {
+      background: #1a2a1a;
+    }
+
+    .insight-item:last-child {
+      border-bottom: none;
+    }
+
+    .insight-icon {
+      width: 40px;
+      height: 40px;
+      background: #1a2a1a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .insight-content {
+      flex: 1;
+    }
+
+    .insight-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .insight-desc {
+      color: #7aab7a;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+    }
+
+    .insight-confidence {
+      color: #4ade80;
+    }
+
+    .insight-impact {
+      color: #fbbf24;
+    }
+
+    /* Recommendations Panel */
+    .recommendations-panel {
+      background: linear-gradient(135deg, #1a2a1a, #141f14);
+      border: 1px solid #4ade80;
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .rec-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .rec-icon {
+      font-size: 1.8rem;
+    }
+
+    .rec-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      color: #4ade80;
+    }
+
+    .rec-list {
+      list-style: none;
+    }
+
+    .rec-item {
+      padding: 1rem;
+      background: rgba(74, 222, 128, 0.05);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #4ade80;
+      transition: transform 0.2s;
+    }
+
+    .rec-item:hover {
+      transform: translateX(5px);
+    }
+
+    .rec-item-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .rec-item-desc {
+      color: #7aab7a;
+      font-size: 0.85rem;
+    }
+
+    .rec-save {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #4ade80;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(74, 222, 128, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #4ade80;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .footer-links a:hover {
+      color: #4ade80;
+    }
+
+    .copyright {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #4a6b4a;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      h1 { font-size: 2.5rem; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .prediction-grid { grid-template-columns: 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .ai-stats { flex-direction: column; gap: 0.5rem; }
+      footer { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <div class="logo">⟁ EcoSense <span>/ analysis</span></div>
+      <ul class="nav-links">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="electricity.html">Electricity</a></li>
+        <li><a href="water.html">Water</a></li>
+        <li><a href="analysis.html" class="active">Analysis</a></li>
+        <li><a href="achievements.html">Achievements</a></li>
+        <li><a href="ecocleaning.html">Eco-Cleaning</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="page-header">
+    <div class="container">
+      <span class="section-label">// Predictive Analysis</span>
+      <h1>Smart <em>Forecasting</em><br>& Insights</h1>
+      <p class="header-desc">AI-powered predictions and analysis for your electricity and water consumption patterns.</p>
+    </div>
+  </section>
+
+  <section class="analyzer">
+    <div class="container">
+      <!-- Resource Toggle -->
+      <div class="resource-toggle">
+        <button class="toggle-btn active" id="toggleElectricity" onclick="switchResource('electricity')">
+          <span>⚡</span> Electricity Analysis
+        </button>
+        <button class="toggle-btn" id="toggleWater" onclick="switchResource('water')">
+          <span>💧</span> Water Analysis
+        </button>
+      </div>
+
+      <!-- AI Status Bar -->
+      <div class="ai-status">
+        <div class="ai-pulse"></div>
+        <span class="ai-text">AI Analysis Engine Active</span>
+        <div class="ai-stats">
+          <div class="ai-stat">
+            <span class="ai-stat-value" id="dataPoints">1.2M</span>
+            <span class="ai-stat-label">Data Points</span>
+          </div>
+          <div class="ai-stat">
+            <span class="ai-stat-value" id="accuracy">94%</span>
+            <span class="ai-stat-label">Accuracy</span>
+          </div>
+          <div class="ai-stat">
+            <span class="ai-stat-value" id="models">4</span>
+            <span class="ai-stat-label">ML Models</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards - Electricity (default) -->
+      <div id="electricitySummary">
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span class="summary-icon">📊</span>
+            <span class="summary-label">Avg. Daily Usage</span>
+            <span class="summary-value">8.2 kWh</span>
+            <span class="summary-trend trend-down">▼ 5% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">💰</span>
+            <span class="summary-label">Monthly Bill</span>
+            <span class="summary-value">₹1,482</span>
+            <span class="summary-trend trend-up">▲ 8% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">🌡️</span>
+            <span class="summary-label">Peak Hours</span>
+            <span class="summary-value">7-9 PM</span>
+            <span class="summary-trend">35% of daily usage</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">⚡</span>
+            <span class="summary-label">Carbon Footprint</span>
+            <span class="summary-value">210 kg</span>
+            <span class="summary-trend">CO₂ per month</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards - Water (hidden by default) -->
+      <div id="waterSummary" style="display: none;">
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span class="summary-icon">📊</span>
+            <span class="summary-label">Avg. Daily Usage</span>
+            <span class="summary-value">280 L</span>
+            <span class="summary-trend trend-up">▲ 12% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">💰</span>
+            <span class="summary-label">Monthly Cost</span>
+            <span class="summary-value">₹84.50</span>
+            <span class="summary-trend trend-up">▲ 8% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">🚿</span>
+            <span class="summary-label">Peak Hours</span>
+            <span class="summary-value">7-9 AM</span>
+            <span class="summary-trend">45% of daily usage</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-icon">💧</span>
+            <span class="summary-label">vs. Benchmark</span>
+            <span class="summary-value">+15%</span>
+            <span class="summary-trend">Above average</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction Cards - Electricity (default) -->
+      <div id="electricityPredictions">
+        <div class="prediction-grid">
+          <div class="prediction-card">
+            <span class="pred-label">Next Month Forecast</span>
+            <span class="pred-value">247 kWh</span>
+            <span class="pred-desc">Expected increase of 12% due to summer</span>
+            <span class="pred-badge">₹1,482 estimated bill</span>
+          </div>
+          <div class="prediction-card">
+            <span class="pred-label">Peak Usage Prediction</span>
+            <span class="pred-value">7-9 PM</span>
+            <span class="pred-desc">35% of daily consumption during peak hours</span>
+            <span class="pred-badge">Shift usage to save ₹180</span>
+          </div>
+          <div class="prediction-card">
+            <span class="pred-label">Savings Potential</span>
+            <span class="pred-value">₹450</span>
+            <span class="pred-desc">23% reduction achievable with changes</span>
+            <span class="pred-badge">Payback period: 3 months</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction Cards - Water (hidden by default) -->
+      <div id="waterPredictions" style="display: none;">
+        <div class="prediction-grid">
+          <div class="prediction-card">
+            <span class="pred-label">Next Month Forecast</span>
+            <span class="pred-value">8,450 L</span>
+            <span class="pred-desc">8% increase expected due to summer</span>
+            <span class="pred-badge">Estimated cost: ₹84.50</span>
+          </div>
+          <div class="prediction-card">
+            <span class="pred-label">Peak Usage Prediction</span>
+            <span class="pred-value">7-9 AM</span>
+            <span class="pred-desc">Morning routines consume 45% of daily water</span>
+            <span class="pred-badge">Optimize shower timing</span>
+          </div>
+          <div class="prediction-card">
+            <span class="pred-label">Savings Potential</span>
+            <span class="pred-value">1,250 L</span>
+            <span class="pred-desc">15% reduction with flow reducers</span>
+            <span class="pred-badge">Save ₹15 per month</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Section -->
+      <div class="chart-section">
+        <div class="chart-header">
+          <h3 class="chart-title" id="chartTitle">30-Day Consumption Forecast - Electricity</h3>
+          <div class="chart-period">
+            <button class="period-btn active" onclick="updateChartPeriod('week')">Week</button>
+            <button class="period-btn" onclick="updateChartPeriod('month')">Month</button>
+            <button class="period-btn" onclick="updateChartPeriod('quarter')">Quarter</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="forecastChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Insights Grid -->
+      <div class="insights-grid">
+        <!-- AI Insights Panel -->
+        <div class="insights-panel">
+          <div class="insights-header">
+            <h3 class="insights-title" id="insightsTitle">🔍 AI Insights - Electricity</h3>
+            <span class="insights-count" id="insightsCount">4 insights</span>
+          </div>
+          
+          <!-- Electricity Insights (default) -->
+          <div id="electricityInsights">
+            <div class="insight-item">
+              <div class="insight-icon">📈</div>
+              <div class="insight-content">
+                <div class="insight-title">Increasing Consumption Trend</div>
+                <div class="insight-desc">15% increase over last 3 weeks - likely due to AC usage</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">95% confidence</span>
+                  <span class="insight-impact">High impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">🌡️</div>
+              <div class="insight-content">
+                <div class="insight-title">Temperature Correlation</div>
+                <div class="insight-desc">AC usage spikes when temperature exceeds 32°C</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">88% confidence</span>
+                  <span class="insight-impact">Medium impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">⚡</div>
+              <div class="insight-content">
+                <div class="insight-title">Peak Hour Waste</div>
+                <div class="insight-desc">15% of energy used during peak tariff hours (6-10 PM)</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">92% confidence</span>
+                  <span class="insight-impact">High impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">🔄</div>
+              <div class="insight-content">
+                <div class="insight-title">Weekend Pattern</div>
+                <div class="insight-desc">Weekend usage 40% higher than weekdays</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">97% confidence</span>
+                  <span class="insight-impact">Medium impact</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Water Insights (hidden by default) -->
+          <div id="waterInsights" style="display: none;">
+            <div class="insight-item">
+              <div class="insight-icon">📈</div>
+              <div class="insight-content">
+                <div class="insight-title">Summer Increase</div>
+                <div class="insight-desc">Water consumption up 12% due to summer season</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">94% confidence</span>
+                  <span class="insight-impact">High impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">🚿</div>
+              <div class="insight-content">
+                <div class="insight-title">Shower Duration</div>
+                <div class="insight-desc">Average shower: 12 minutes (recommended: 5-8 min)</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">91% confidence</span>
+                  <span class="insight-impact">High impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">💧</div>
+              <div class="insight-content">
+                <div class="insight-title">Possible Leak Detected</div>
+                <div class="insight-desc">5% baseline increase during night hours</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">78% confidence</span>
+                  <span class="insight-impact">Critical impact</span>
+                </div>
+              </div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-icon">🌿</div>
+              <div class="insight-content">
+                <div class="insight-title">Garden Efficiency</div>
+                <div class="insight-desc">Peak garden usage during afternoon (high evaporation)</div>
+                <div class="insight-meta">
+                  <span class="insight-confidence">96% confidence</span>
+                  <span class="insight-impact">Medium impact</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendations Panel -->
+        <div class="recommendations-panel">
+          <div class="rec-header">
+            <span class="rec-icon">🎯</span>
+            <h3 class="rec-title" id="recTitle">Smart Recommendations - Electricity</h3>
+          </div>
+          
+          <!-- Electricity Recommendations (default) -->
+          <ul class="rec-list" id="electricityRecs">
+            <li class="rec-item">
+              <div class="rec-item-title">Shift AC Usage</div>
+              <div class="rec-item-desc">Run AC before 7 PM to avoid peak tariff</div>
+              <span class="rec-save">Potential savings: ₹180/month</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Unplug Standby Devices</div>
+              <div class="rec-item-desc">TV, charger, and appliances on standby</div>
+              <span class="rec-save">Save 45 kWh/year</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Optimize Washing Machine</div>
+              <div class="rec-item-desc">Schedule for weekend mornings</div>
+              <span class="rec-save">Save ₹120/month</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Replace Old Appliances</div>
+              <div class="rec-item-desc">3 appliances past efficiency date</div>
+              <span class="rec-save">Potential savings: ₹2,400/year</span>
+            </li>
+          </ul>
+
+          <!-- Water Recommendations (hidden by default) -->
+          <ul class="rec-list" id="waterRecs" style="display: none;">
+            <li class="rec-item">
+              <div class="rec-item-title">Reduce Shower Time</div>
+              <div class="rec-item-desc">Cut 3 minutes from shower duration</div>
+              <span class="rec-save">Save 1,200L/month</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Install Aerators</div>
+              <div class="rec-item-desc">On all taps - reduces flow by 50%</div>
+              <span class="rec-save">Save 2,000L/month</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Fix Leaking Tap</div>
+              <div class="rec-item-desc">Detected possible leak in kitchen</div>
+              <span class="rec-save">Save 500L/month</span>
+            </li>
+            <li class="rec-item">
+              <div class="rec-item-title">Morning Watering</div>
+              <div class="rec-item-desc">Water plants before 8 AM</div>
+              <span class="rec-save">Reduce evaporation by 30%</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">⟁ EcoSense</div>
+    <ul class="footer-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="electricity.html">Electricity</a></li>
+      <li><a href="water.html">Water</a></li>
+      <li><a href="analysis.html">Analysis</a></li>
+    </ul>
+    <div class="copyright">© 2025 EcoSense</div>
+  </footer>
+  <script src="api.js"></script>
+
+  <script>
+    // Chart initialization
+    const ctx = document.getElementById('forecastChart').getContext('2d');
+    let currentResource = 'electricity';
+    let currentPeriod = 'month';
+
+    // Generate realistic data
+    const days = Array.from({length: 30}, (_, i) => `Day ${i+1}`);
+    
+    // Electricity data
+    const elecHistorical = Array.from({length: 30}, () => (Math.random() * 5 + 6).toFixed(1)); // 6-11 kWh
+    const elecPredicted = Array.from({length: 30}, () => (Math.random() * 6 + 7).toFixed(1)); // 7-13 kWh
+    
+    // Water data
+    const waterHistorical = Array.from({length: 30}, () => Math.floor(Math.random() * 100 + 200)); // 200-300L
+    const waterPredicted = Array.from({length: 30}, () => Math.floor(Math.random() * 120 + 220)); // 220-340L
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [{
+          label: 'Historical Usage',
+          data: elecHistorical,
+          borderColor: '#4ade80',
+          backgroundColor: 'rgba(74, 222, 128, 0.1)',
+          tension: 0.4,
+          fill: true,
+          borderWidth: 2
+        }, {
+          label: 'AI Prediction',
+          data: elecPredicted,
+          borderColor: '#38bdf8',
+          borderDash: [5, 5],
+          backgroundColor: 'rgba(56, 189, 248, 0.05)',
+          tension: 0.4,
+          fill: true,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#e2ffe2', font: { family: 'DM Mono' } }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(74, 222, 128, 0.1)' },
+            ticks: { color: '#7aab7a' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#7aab7a', maxRotation: 45 }
+          }
+        }
+      }
+    });
+
+    // Switch between electricity and water
+    function switchResource(resource) {
+      currentResource = resource;
+      
+      // Update toggle buttons
+      document.getElementById('toggleElectricity').classList.toggle('active', resource === 'electricity');
+      document.getElementById('toggleWater').classList.toggle('active', resource === 'water');
+      
+      // Show/hide sections
+      document.getElementById('electricitySummary').style.display = resource === 'electricity' ? 'block' : 'none';
+      document.getElementById('waterSummary').style.display = resource === 'water' ? 'block' : 'none';
+      
+      document.getElementById('electricityPredictions').style.display = resource === 'electricity' ? 'block' : 'none';
+      document.getElementById('waterPredictions').style.display = resource === 'water' ? 'block' : 'none';
+      
+      document.getElementById('electricityInsights').style.display = resource === 'electricity' ? 'block' : 'none';
+      document.getElementById('waterInsights').style.display = resource === 'water' ? 'block' : 'none';
+      
+      document.getElementById('electricityRecs').style.display = resource === 'electricity' ? 'block' : 'none';
+      document.getElementById('waterRecs').style.display = resource === 'water' ? 'block' : 'none';
+      
+      // Update titles
+      document.getElementById('chartTitle').textContent = resource === 'electricity' ? 
+        '30-Day Consumption Forecast - Electricity' : '30-Day Consumption Forecast - Water';
+      document.getElementById('insightsTitle').textContent = resource === 'electricity' ? 
+        '🔍 AI Insights - Electricity' : '🔍 AI Insights - Water';
+      document.getElementById('recTitle').textContent = resource === 'electricity' ? 
+        '🎯 Smart Recommendations - Electricity' : '🎯 Smart Recommendations - Water';
+      
+      // Update chart data
+      if (resource === 'electricity') {
+        chart.data.datasets[0].data = elecHistorical;
+        chart.data.datasets[0].label = 'Historical Usage (kWh)';
+        chart.data.datasets[1].data = elecPredicted;
+        chart.data.datasets[1].label = 'AI Prediction (kWh)';
+      } else {
+        chart.data.datasets[0].data = waterHistorical;
+        chart.data.datasets[0].label = 'Historical Usage (L)';
+        chart.data.datasets[1].data = waterPredicted;
+        chart.data.datasets[1].label = 'AI Prediction (L)';
+      }
+      chart.update();
+      
+      // Update AI status
+      document.getElementById('accuracy').textContent = resource === 'electricity' ? '94%' : '91%';
+      document.getElementById('dataPoints').textContent = resource === 'electricity' ? '1.2M' : '850K';
+    }
+
+    // Update chart period
+    function updateChartPeriod(period) {
+      currentPeriod = period;
+      
+      // Update active button
+      document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update chart labels and data based on period
+      if (period === 'week') {
+        chart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        if (currentResource === 'electricity') {
+          chart.data.datasets[0].data = [7.2, 6.8, 7.5, 8.1, 9.2, 11.5, 10.8];
+          chart.data.datasets[1].data = [7.0, 6.9, 7.3, 7.9, 8.8, 10.5, 9.9];
+        } else {
+          chart.data.datasets[0].data = [220, 210, 235, 245, 280, 320, 310];
+          chart.data.datasets[1].data = [230, 225, 240, 255, 290, 335, 325];
+        }
+      } else if (period === 'month') {
+        chart.data.labels = Array.from({length: 30}, (_, i) => `Day ${i+1}`);
+        if (currentResource === 'electricity') {
+          chart.data.datasets[0].data = elecHistorical;
+          chart.data.datasets[1].data = elecPredicted;
+        } else {
+          chart.data.datasets[0].data = waterHistorical;
+          chart.data.datasets[1].data = waterPredicted;
+        }
+      } else {
+        chart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        if (currentResource === 'electricity') {
+          chart.data.datasets[0].data = [210, 195, 208, 220, 245, 270, 285, 275, 250, 230, 215, 205];
+          chart.data.datasets[1].data = [215, 200, 210, 225, 250, 275, 290, 280, 255, 235, 220, 210];
+        } else {
+          chart.data.datasets[0].data = [6500, 6200, 6800, 7200, 8200, 9100, 9500, 9200, 8500, 7800, 7100, 6700];
+          chart.data.datasets[1].data = [6700, 6400, 7000, 7400, 8400, 9300, 9700, 9400, 8700, 8000, 7300, 6900];
+        }
+      }
+      chart.update();
+    }
+
+    // Simulate real-time updates
+    setInterval(() => {
+      const trends = ['up', 'down', 'stable'];
+      const trend = trends[Math.floor(Math.random() * trends.length)];
+      const trendClass = trend === 'up' ? 'trend-up' : trend === 'down' ? 'trend-down' : '';
+      
+      document.querySelectorAll('.summary-trend').forEach(el => {
+        if (el.classList.contains('trend-up') || el.classList.contains('trend-down')) {
+          el.className = 'summary-trend ' + trendClass;
+        }
+      });
+    }, 5000);
+  </script>
+</body>
+</html>
