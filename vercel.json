@@ -2,6 +2,9 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://ecosense-backend.onrender.com/api/$1" }
   ],
+  "builds": [
+    { "src": "home.html", "use": "@vercel/static" }
+  ],
   "routes": [
     { "src": "/", "dest": "/home.html" }
   ]
