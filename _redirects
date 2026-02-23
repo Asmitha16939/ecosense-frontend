@@ -1,0 +1,2 @@
+/api/*  https://ecosense-backend.onrender.com/api/:splat  200
+/*      /home.html    200
