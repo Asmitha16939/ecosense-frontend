@@ -624,69 +624,62 @@
 
     // Main calculation function
 async function calculateWater() {
-  // Get values from form
-  const activityType = document.getElementById('activityType').value;
-  const flowRate = parseInt(document.getElementById('flowIntensity').value);
-  const duration = parseFloat(document.getElementById('duration').value) || 0;
-  const sessionsPerDay = parseInt(document.getElementById('sessions').value);
-  const daysPerWeek = parseInt(document.getElementById('daysPerWeek').value);
-  const waterRate = parseFloat(document.getElementById('waterRate').value) || 10;
+    // Get values from form
+    const activityType = document.getElementById('activityType').value;
+    const flowRate = parseInt(document.getElementById('flowIntensity').value);
+    const duration = parseFloat(document.getElementById('duration').value) || 0;
+    const sessionsPerDay = parseInt(document.getElementById('sessions').value);
+    const daysPerWeek = parseInt(document.getElementById('daysPerWeek').value);
+    const waterRate = parseFloat(document.getElementById('waterRate').value) || 10;
 
-  // Show loading
-  document.getElementById('dailyValue').textContent = '...';
-  document.getElementById('monthlyValue').textContent = '...';
-  document.getElementById('costValue').textContent = '...';
-  
-  try {
-    // Call backend API
-    const result = await api.water.calculate({
-      activityType,
-      flowRate,
-      duration,
-      sessionsPerDay,
-      daysPerWeek,
-      waterRate
-    });
+    // Show loading
+    document.getElementById('dailyValue').textContent = '...';
+    document.getElementById('monthlyValue').textContent = '...';
+    document.getElementById('costValue').textContent = '...';
     
-    // Update UI
-    document.getElementById('dailyValue').textContent = result.dailyLiters;
-    document.getElementById('monthlyValue').textContent = result.monthlyLiters;
-    document.getElementById('costValue').textContent = '₹' + Math.round(result.monthlyCost);
-    document.getElementById('comparisonValue').textContent = result.comparison;
+    try {
+        // Call backend API - adjust parameter names to match backend
+        const result = await api.water.calculate({
+            activity_type: activityType,  // Try with underscore
+            flow_rate: flowRate,           // Try with underscore
+            duration: duration,
+            sessions_per_day: sessionsPerDay, // Try with underscore
+            days_per_week: daysPerWeek,
+            water_rate: waterRate           // Try with underscore
+        });
+        
+        // Update UI based on response field names
+        document.getElementById('dailyValue').textContent = result.daily_liters || result.dailyLiters;
+        document.getElementById('monthlyValue').textContent = result.monthly_liters || result.monthlyLiters;
+        document.getElementById('costValue').textContent = '₹' + (result.monthly_cost || result.monthlyCost);
 
-    // Update comparison description
-    const compDesc = document.getElementById('comparisonDesc');
-    if (result.ratio < 1.2) {
-      compDesc.textContent = 'Within recommended range';
-    } else if (result.ratio < 1.8) {
-      compDesc.textContent = `${Math.round((result.ratio - 1) * 100)}% above benchmark`;
-    } else {
-      compDesc.textContent = `${Math.round((result.ratio - 1) * 100)}% above - improvement needed`;
+        // Update comparison
+        const comparison = result.comparison || 'Average';
+        document.getElementById('comparisonValue').textContent = comparison;
+
+        // Update bar
+        const bar = document.getElementById('consumptionBar');
+        if (comparison === 'Good') {
+            bar.className = 'water-bar good-bar';
+            bar.style.width = '30%';
+        } else if (comparison === 'Average') {
+            bar.className = 'water-bar average-bar';
+            bar.style.width = '60%';
+        } else {
+            bar.className = 'water-bar high-bar';
+            bar.style.width = '90%';
+        }
+
+        // Update tips
+        const tipList = document.getElementById('tipList');
+        if (result.tips && result.tips.length > 0) {
+            tipList.innerHTML = result.tips.map(tip => `<li>${tip}</li>`).join('');
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to calculate: ' + error.message);
     }
-
-    // Update bar
-    const bar = document.getElementById('consumptionBar');
-    if (result.comparison === 'Good') {
-      bar.className = 'water-bar good-bar';
-      bar.style.width = '30%';
-    } else if (result.comparison === 'Average') {
-      bar.className = 'water-bar average-bar';
-      bar.style.width = '60%';
-    } else {
-      bar.className = 'water-bar high-bar';
-      bar.style.width = '90%';
-    }
-
-    // Update tips
-    const tipList = document.getElementById('tipList');
-    if (result.tips && result.tips.length > 0) {
-      tipList.innerHTML = result.tips.map(tip => `<li>${tip}</li>`).join('');
-    }
-
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to calculate. Make sure backend is running on port 5001');
-  }
 }
   </script>
 </body>
