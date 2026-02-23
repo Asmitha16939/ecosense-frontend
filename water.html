@@ -638,20 +638,20 @@ async function calculateWater() {
     document.getElementById('costValue').textContent = '...';
     
     try {
-    // Call backend API with CORRECT parameter names from your schema
-    const result = await api.water.calculate({
-        activity: activityType,           
-        flow_rate: flowRate,               
-        duration: duration,                 
-        sessions: sessionsPerDay,           
-        days_per_week: daysPerWeek,         
-        water_rate: waterRate                
-    });
+        // Call backend API with CORRECT parameter names
+        const result = await api.water.calculate({
+            activity: activityType,        // Fixed: was activity_type
+            flow_rate: flowRate,
+            duration: duration,
+            sessions: sessionsPerDay,      // Fixed: was sessions_per_day
+            days_per_week: daysPerWeek,
+            water_rate: waterRate
+        });
         
-        // Update UI based on response field names
-        document.getElementById('dailyValue').textContent = result.daily_liters || result.dailyLiters;
-        document.getElementById('monthlyValue').textContent = result.monthly_liters || result.monthlyLiters;
-        document.getElementById('costValue').textContent = '₹' + (result.monthly_cost || result.monthlyCost);
+        // Update UI
+        document.getElementById('dailyValue').textContent = result.daily_liters || result.dailyLiters || '0';
+        document.getElementById('monthlyValue').textContent = result.monthly_liters || result.monthlyLiters || '0';
+        document.getElementById('costValue').textContent = '₹' + (result.monthly_cost || result.monthlyCost || '0');
 
         // Update comparison
         const comparison = result.comparison || 'Average';
@@ -659,10 +659,10 @@ async function calculateWater() {
 
         // Update bar
         const bar = document.getElementById('consumptionBar');
-        if (comparison === 'Good') {
+        if (comparison === 'Good' || comparison === 'Efficient') {
             bar.className = 'water-bar good-bar';
             bar.style.width = '30%';
-        } else if (comparison === 'Average') {
+        } else if (comparison === 'Average' || comparison === 'Moderate') {
             bar.className = 'water-bar average-bar';
             bar.style.width = '60%';
         } else {
@@ -674,6 +674,8 @@ async function calculateWater() {
         const tipList = document.getElementById('tipList');
         if (result.tips && result.tips.length > 0) {
             tipList.innerHTML = result.tips.map(tip => `<li>${tip}</li>`).join('');
+        } else {
+            tipList.innerHTML = '<li>✅ Your water usage looks good!</li>';
         }
 
     } catch (error) {
