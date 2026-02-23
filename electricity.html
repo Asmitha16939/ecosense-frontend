@@ -624,13 +624,6 @@ async function calculateElectricity() {
     const daysPerWeek = parseInt(document.getElementById('daysPerWeek').value);
     const occupancy = parseFloat(document.getElementById('occupancy').value);
     const tariff = parseFloat(document.getElementById('tariff').value) || 6;
-    
-    // Get wattage based on appliance
-    const wattage = {
-        fan: 75, light: 10, ac: 1500, tv: 100, 
-        fridge: 150, washer: 500, heater: 2000, geyser: 3000
-    };
-    const watts = wattage[applianceType] || 0;
 
     // Show loading
     document.getElementById('consumptionValue').textContent = '...';
@@ -639,20 +632,20 @@ async function calculateElectricity() {
     document.getElementById('efficiencyValue').textContent = '...';
     
     try {
-        // Call backend API
+        // Call backend API with EXACT parameter names from your electricity.py
         const result = await api.electricity.calculate({
-            applianceType,
-            watts,
-            hoursUsed: hours,
-            daysPerWeek,
-            occupancy,
-            tariff
+            appliance_type: applianceType,  // Note: underscore, not camelCase
+            count: count,                   // matches backend
+            hours: hours,                    // matches backend
+            days_per_week: daysPerWeek,      // matches backend
+            occupancy: occupancy,            // matches backend
+            tariff: tariff                    // matches backend
         });
         
-        // Update results
-        document.getElementById('consumptionValue').textContent = result.monthlyKwh.toFixed(1);
-        document.getElementById('costValue').textContent = '₹' + Math.round(result.monthlyCost);
-        document.getElementById('carbonValue').textContent = result.carbonFootprint.toFixed(1);
+        // Update results with the field names from backend response
+        document.getElementById('consumptionValue').textContent = result.monthly_kwh.toFixed(1);
+        document.getElementById('costValue').textContent = '₹' + Math.round(result.monthly_cost);
+        document.getElementById('carbonValue').textContent = result.carbon_kg.toFixed(1);
         document.getElementById('efficiencyValue').textContent = result.efficiency;
 
         // Update waste bar
@@ -670,25 +663,17 @@ async function calculateElectricity() {
 
         // Update waste description
         const wasteDesc = document.getElementById('efficiencyDesc');
-        if (result.wastePercentage < 20) {
-            wasteDesc.textContent = 'Excellent! Minimal waste detected';
-        } else if (result.wastePercentage < 50) {
-            wasteDesc.textContent = `${Math.round(result.wastePercentage)}% estimated waste`;
-        } else {
-            wasteDesc.textContent = `${Math.round(result.wastePercentage)}% waste - improvement needed`;
-        }
+        wasteDesc.textContent = `${result.waste_percentage}% waste - ${result.efficiency}`;
 
         // Update tips
         const tipList = document.getElementById('tipList');
         if (result.tips && result.tips.length > 0) {
             tipList.innerHTML = result.tips.map(tip => `<li>${tip}</li>`).join('');
-        } else {
-            tipList.innerHTML = '<li>✅ Your usage looks good! Keep it up!</li>';
         }
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to calculate. Make sure backend is running on port 5001');
+        alert('Failed to calculate: ' + error.message);
         
         // Reset to default values on error
         document.getElementById('consumptionValue').textContent = '—';
