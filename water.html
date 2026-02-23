@@ -638,15 +638,15 @@ async function calculateWater() {
     document.getElementById('costValue').textContent = '...';
     
     try {
-        // Call backend API - adjust parameter names to match backend
-        const result = await api.water.calculate({
-            activity_type: activityType,  // Try with underscore
-            flow_rate: flowRate,           // Try with underscore
-            duration: duration,
-            sessions_per_day: sessionsPerDay, // Try with underscore
-            days_per_week: daysPerWeek,
-            water_rate: waterRate           // Try with underscore
-        });
+    // Call backend API with CORRECT parameter names from your schema
+    const result = await api.water.calculate({
+        activity: activityType,           
+        flow_rate: flowRate,               
+        duration: duration,                 
+        sessions: sessionsPerDay,           
+        days_per_week: daysPerWeek,         
+        water_rate: waterRate                
+    });
         
         // Update UI based on response field names
         document.getElementById('dailyValue').textContent = result.daily_liters || result.dailyLiters;
