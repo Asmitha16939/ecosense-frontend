@@ -643,10 +643,11 @@ async function calculateElectricity() {
         });
         
         // Update results with the field names from backend response
-        document.getElementById('consumptionValue').textContent = result.monthly_kwh.toFixed(1);
-        document.getElementById('costValue').textContent = '₹' + Math.round(result.monthly_cost);
-        document.getElementById('carbonValue').textContent = result.carbon_kg.toFixed(1);
-        document.getElementById('efficiencyValue').textContent = result.efficiency;
+       // Update results with the field names from backend response
+document.getElementById('consumptionValue').textContent = result.monthly_kwh.toFixed(1);
+document.getElementById('costValue').textContent = '₹' + Math.round(result.monthly_cost);
+document.getElementById('carbonValue').textContent = result.carbon_kg.toFixed(1);
+document.getElementById('efficiencyValue').textContent = result.efficiency;
 
         // Update waste bar
         const bar = document.getElementById('consumptionBar');
